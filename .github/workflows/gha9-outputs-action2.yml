@@ -1,0 +1,61 @@
+name: artifacts upload action
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Test code
+        run: echo Run Test....
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+
+    outputs:
+      xxx-script: ${{steps.kkk.outputs.something}}
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Build website
+        run: |
+            npm run build
+            ls ${{github.workspace}}
+
+      - name: Publish JS filename                    
+        id: kkk
+        run:  find build/assets/*.js -type f -execdir echo 'something={}' >> $GITHUB_OUTPUT ';' 
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+            name: build-files
+            path:  |    
+                build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts 
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files           
+          path: build                 
+
+      - name: Output contents          
+        run: |
+          ls -R 
+
+      - name: Output filename          
+        run: echo "${{ needs.build.outputs.xxx-script }}"
+
+      - name: Deploy
+        run: echo "Deploying..."
