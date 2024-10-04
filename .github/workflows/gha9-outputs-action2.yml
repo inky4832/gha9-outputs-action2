@@ -28,7 +28,8 @@ jobs:
         run: |
             npm run build
             ls ${{github.workspace}}
-
+            ls -R
+            
       - name: Publish JS filename                    
         id: kkk
         run:  find build/static/*.js -type f -execdir echo 'something={}' >> $GITHUB_OUTPUT ';' 
