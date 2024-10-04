@@ -1,4 +1,4 @@
-name: artifacts upload action
+name: outputs  action
 on:
   push:
     branches:
